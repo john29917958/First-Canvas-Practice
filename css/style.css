@@ -7,22 +7,6 @@ body {
 	background-color: black;
 }
 
-canvas#myCanvas {
-	border-color: white;
-	border-radius: 5px;
-	border-style: solid;
-	border-width: 2px;
-	background-color: rgba(255, 255, 255, 0.1);
-}
-
-canvas#myCanvas:hover {
-	cursor: pointer;
-}
-
-.text-center {
-	text-align: center;
-}
-
 .btn {
 	width: 200px;
 	height: 50px;
@@ -47,4 +31,127 @@ canvas#myCanvas:hover {
 
 .btn:active {
 	box-shadow: 0 2px 35px rgba(255, 255, 255, 0.5);
+}
+
+canvas#myCanvas {
+	border-color: white;
+	border-radius: 5px;
+	border-style: solid;
+	border-width: 2px;
+	background-color: rgba(255, 255, 255, 0.1);
+}
+
+canvas#myCanvas:hover {
+	cursor: pointer;
+}
+
+.swatches .swatch-item {
+	margin: 0;
+	padding: 0;
+	width: 20px;
+	height: 20px;
+	border-width: 2px;
+	border-style: solid;
+	border-radius: 2px;
+	border-color: white;
+	display: inline-block;
+	transition: box-shadow 0.1s ease-in-out;
+}
+
+.swatches > .swatch-item:hover {
+	box-shadow: 0 0 35px rgba(255, 255, 255, 0.7);
+}
+
+.swatches > .current-color > .swatch-item {
+	width: 40px;
+	height: 40px;
+}
+
+.swatches > .current-color > input {
+	position: relative;
+	top: -16px;
+	height: 40px;
+	width: 108px;
+	font-size: 20px;
+	margin: 0;
+	margin-bottom: -10px;
+	padding: 5px;
+	padding-top: 2px;
+	padding-bottom: 2px;
+	border-style: solid;
+	border-color: #F0F0F0;
+	border-width: 1px;
+	border-radius: 5px;
+	display: inline-block;
+	transition: box-shadow 0.2s ease-in-out;
+}
+
+.swatches > .current-color > input:focus {
+	box-shadow: 0 0 25px rgba(0, 191, 255, 0.5);
+}
+
+.swatches > .swatch-item:hover {
+	cursor: pointer;
+}
+
+.fixed-to-left {
+	position: fixed;
+	left: 0;
+}
+
+.fixed-to-right {
+	position: fixed;
+	right: 0;
+}
+
+.text-center {
+	text-align: center;
+}
+
+ul.side-bar {
+	position: fixed;
+	margin: 0;
+	padding: 0;
+	top: 0;
+	width: 210px;
+	height: 100%;
+	list-style-type: none;
+	background-color: #101010;
+	z-index: 1030;
+}
+
+ul.side-bar > li {
+	margin: 0;
+	padding-left: 20px;
+	padding-right: 20px;
+	padding-top: 10px;
+	padding-bottom: 10px;
+}
+
+ul.side-bar > li:hover {
+	color: black;
+	background-color: white;
+	cursor: pointer;
+	transition: color 0.3s ease-in-out,
+				background-color 0.3s ease-in-out,
+				box-shadow 0.1s ease-in-out;
+}
+
+ul.side-bar > li.brand {
+	padding-top: 20px;
+	padding-bottom: 20px;
+	font-size: 15pt;
+	font-weight: bold;
+}
+
+ul.side-bar > li.brand:hover {
+	cursor: default;
+	color: white;
+	background-color: transparent;
+}
+
+ul.side-bar > li.swatches:hover {
+	color: white;
+	background-color: transparent;
+	cursor: default;
 }
