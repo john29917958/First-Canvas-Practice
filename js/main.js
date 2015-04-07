@@ -36,6 +36,15 @@ var Swatches = (function() {
   };
 
   /**
+   * Gets the current color in rgb(R, G, B) form.
+   *
+   * @return {String} Return the current color.
+   */
+  Swatches.prototype.getCurrentColor = function() {
+    return $swatches.find('.current-color > .swatch-item').css('background-color');
+  };
+
+  /**
    * Retrives the elements which is response of presenting
    * what current color is.
    *
@@ -57,10 +66,10 @@ var Swatches = (function() {
    * @param {String} color The color to be set.
    */
   Swatches.prototype.setColor = function(color) {
-    var currentColorPanel = this.getCurrentColorElements();
+    var currentColor = this.getCurrentColorElements();
     
-    currentColorPanel.$swatch.css('background-color', color);
-    currentColorPanel.$input.val(color);
+    currentColor.$swatch.css('background-color', color);
+    currentColor.$input.val(color);
   };
 
   return Swatches;

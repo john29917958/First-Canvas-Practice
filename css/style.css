@@ -65,6 +65,7 @@ canvas#myCanvas:hover {
 .swatches > .current-color > .swatch-item {
 	width: 40px;
 	height: 40px;
+	transition: background-color 0.15s ease-in-out;
 }
 
 .swatches > .current-color > input {
