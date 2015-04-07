@@ -7,6 +7,11 @@ var Swatches = (function() {
    * Creates a Swatches.
    * @class
    * @constructor
+   *
+   * @param {Object} $s The Swatches panel jQuery object.
+   * @return {Object} Returns an instance of Swatches if
+   * the number of given Swatches panel is one, returns
+   * Null otherwise.
    */
   function Swatches($s) {
     if ($s.length === 1) {
@@ -14,10 +19,6 @@ var Swatches = (function() {
       $swatches = $s;
       $swatches.find('.swatch-item').each(function (index, item) {
         $(item).css('background-color', $(item).attr('data-color'));
-        $(item).click(function () {
-          $swatches.find('.current-color > .swatch-item').css('background-color', $(item).attr('data-color'));
-          $swatches.find('.current-color > input[name="color"]').val($(item).attr('data-color'));
-        });
       });
     }
     else {
@@ -31,7 +32,35 @@ var Swatches = (function() {
    * @return {Object} Returns all swatch items.
    */
   Swatches.prototype.getSwatchItems = function() {
-    return $swatches.find('.current-color > .swatch-item');
+    return $swatches.find('.swatch-item');
+  };
+
+  /**
+   * Retrives the elements which is response of presenting
+   * what current color is.
+   *
+   * @return {Object} Returns a JSON object which contains
+   * two jQuery object: $swatch and an input field - $input.
+   */
+  Swatches.prototype.getCurrentColorElements = function() {
+    var $currentColorPanel = $swatches.children('.current-color');
+
+    return {
+      $swatch: $currentColorPanel.children('.swatch-item'),
+      $input: $currentColorPanel.children('.color-name')
+    };
+  };
+
+  /**
+   * Set the current color.
+   *
+   * @param {String} color The color to be set.
+   */
+  Swatches.prototype.setColor = function(color) {
+    var currentColorPanel = this.getCurrentColorElements();
+    
+    currentColorPanel.$swatch.css('background-color', color);
+    currentColorPanel.$input.val(color);
   };
 
   return Swatches;
@@ -48,8 +77,7 @@ var Canvas = (function() {
   function styleInit() {
     $canvas[0].width = 800;
     $canvas[0].height = $(window).height() / 2;
-    context.strokeStyle = 'lawngreen';
-    context.shadowColor = context.strokeStyle;
+    instance.setColor('lawngreen');
     context.shadowBlur = 20;
     context.shadowOffsetX = 0;
     context.shadowOffsetY = 0;
@@ -93,6 +121,11 @@ var Canvas = (function() {
    * Creates a Canvas.
    * @class
    * @constructor
+   *
+   * @param {Object} $c The canvas jQuery object.
+   * @return {Object} Returns a Canvas instance if
+   * the number of given canvas jQuery object is one,
+   * returns Null otherwise.
    */
   function Canvas($c) {
     if ($c.length == 1) {
@@ -144,11 +177,82 @@ var Canvas = (function() {
     };
   };
 
+  /**
+   * Set the current color.
+   *
+   * @param {String} color The color to be set.
+   */
+  Canvas.prototype.setColor = function(color) {
+    context.strokeStyle = color;
+    context.shadowColor = context.strokeStyle;
+  }
+
   return Canvas;
+})();
+
+var PainterActionController = (function () {
+  var instance, canvas, swatches;
+
+  /**
+   * Bind all event handlers to elements.
+   */
+  function registerRoutes() {
+    // Clicked on swatche items.
+    swatches.getSwatchItems().click(function() {
+      instance.switchColor($(this).attr('data-color'));
+    });
+
+    // Typed and entered on input on swatches panel.
+    swatches.getCurrentColorElements().$input.keydown(function (e) {
+      var color;
+
+      if (e.keyCode === 13 && (color = $(this).val())) {
+        instance.switchColor(color);
+      }
+    });
+  }
+
+  /**
+   * Creates a PainterActionController.
+   * @class
+   * @constructor
+   *
+   * @param {Object} c A Canvas object.
+   * @param {Object} s A Swatches object.
+   * @return {Object} Returns an instance of
+   * PainterActionController if the given
+   * Canvas and Swatches instance exists,
+   * returns Null otherwise.
+   */
+  function PainterActionController(c, s) {
+    if (c && s) {
+      instance = this;
+      canvas = c;
+      swatches = s;
+
+      registerRoutes();
+    }
+    else {
+      return null;
+    }
+  }
+
+  /**
+   * Switch color when a swatch item on Swatches panel is clicked.
+   *
+   * @param {String} color The color to be set.
+   */
+  PainterActionController.prototype.switchColor = function(color) {
+    canvas.setColor(color);
+    swatches.setColor(color);
+  };
+
+  return PainterActionController;
 })();
 
 /** Entry point of JavaScript. **/
 $(document).ready(function () {
-  var canvas = new Canvas($("#myCanvas"));
-  var swatches = new Swatches($(".swatches"));
+  var canvas = new Canvas($("#myCanvas")),
+      swatches = new Swatches($(".swatches")),
+      painterActionController = new PainterActionController(canvas, swatches);
 });
