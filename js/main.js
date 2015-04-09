@@ -20,6 +20,12 @@ var Swatches = (function() {
       $swatches.find('.swatch-item').each(function (index, item) {
         $(item).css('background-color', $(item).attr('data-color'));
       });
+      this.getCurrentColorElements().$input.focusin(function () {
+        var $tutorial = $('.tutorial[data-type="color"]');
+        if ($tutorial) {
+          $tutorial.slideDown('slow');
+        }
+      });
     }
     else {
       return null;
@@ -73,6 +79,94 @@ var Swatches = (function() {
   };
 
   return Swatches;
+})();
+
+var LineWidthResizer = (function () {
+  var instance, $resizer, $increaseButton,
+      $decreaseButton, $input, currentWidth;
+
+  /**
+   * Creates a LineWidthResizer.
+   * @class
+   * @constructor
+   *
+   * @param {Selector} | {Object} resizer The line
+   * width resizer HTML element or CSS selector.
+   * @return {Object} Returns an instance of
+   * LineWidthResizer. Returns Null if the given
+   * parameter is invalid.
+   */
+  function LineWidthResizer(resizer) {
+    if ($(resizer).length === 1) {
+      instance = this;
+      $resizer = $(resizer);
+      $increaseButton = $resizer.children('.increase');
+      $decreaseButton = $resizer.children('.decrease');
+      $input = $resizer.children('input');
+      currentWidth = 1;
+      $input.focusin(function () {
+        var $tutorial = $('.tutorial[data-type="line-width"]');
+        if ($tutorial) {
+          $tutorial.slideDown();
+        }
+      });
+    }
+    else {
+      return null;
+    }
+  }
+
+  /**
+   * Set the current line width.
+   *
+   * @param {Integer} | {String} width The width of line.
+   * @return {Integer} Returns the width back if setting
+   * is succeeded, returns 0 if setting is failed.
+   */
+  LineWidthResizer.prototype.setLineWidth = function(width) {
+    var pixelPattern = /[1-9][0-9]*(px)?/;
+
+    if (pixelPattern.test(width)) {
+      if (typeof width === 'string') {
+        width = width.replace('px', '');
+      }
+      currentWidth = width;
+      $input.val(width + 'px');
+
+      return width;
+    }
+    else {
+      $input.val(currentWidth + 'px');
+
+      return 0;
+    }
+  };
+
+  /**
+   * Gets the current line width.
+   *
+   * @return {Integer} Returns the current line width.
+   */
+  LineWidthResizer.prototype.getLineWidth = function() {
+    return currentWidth;
+  };
+
+  /**
+   * Gets all components of LineWidthResizer as jQuery
+   * objects.
+   *
+   * @return {JSON} Returns a JSON object containing
+   * all components of LineWidthResizer as jQuery objects.
+   */
+  LineWidthResizer.prototype.getElements = function() {
+    return {
+      $increaseButton: $increaseButton,
+      $decreaseButton: $decreaseButton,
+      $input: $input
+    };
+  };
+
+  return LineWidthResizer;
 })();
 
 var Canvas = (function() {
@@ -194,18 +288,27 @@ var Canvas = (function() {
   Canvas.prototype.setColor = function(color) {
     context.strokeStyle = color;
     context.shadowColor = context.strokeStyle;
-  }
+  };
+
+  /**
+   * Set the line width.
+   *
+   * @param {Integer} The width of line.
+   */
+  Canvas.prototype.setLineWidth = function(lineWidth) {
+    context.lineWidth = lineWidth;
+  };
 
   return Canvas;
 })();
 
 var PainterActionController = (function () {
-  var instance, canvas, swatches;
+  var instance, canvas, swatches, lineWidthResizer;
 
   /**
    * Bind all event handlers to elements.
    */
-  function registerRoutes() {
+  function registerActions() {
     // Clicked on swatche items.
     swatches.getSwatchItems().click(function() {
       instance.switchColor($(this).attr('data-color'));
@@ -219,6 +322,23 @@ var PainterActionController = (function () {
         instance.switchColor(color);
       }
     });
+
+    // Increase line width by 1 if increase button clicked.
+    lineWidthResizer.getElements().$increaseButton.click(function () {
+      instance.setLineWidth(lineWidthResizer.getLineWidth() + 1);
+    });
+
+    // Decrease line width by 1 if decrease button cliecked.
+    lineWidthResizer.getElements().$decreaseButton.click(function () {
+      instance.setLineWidth(lineWidthResizer.getLineWidth() - 1);
+    });
+
+    // Set the line width by the value of input of LineWidthResizer.
+    lineWidthResizer.getElements().$input.keydown(function (e) {
+      if (e.keyCode === 13) {
+        instance.setLineWidth($(this).val());
+      }
+    });
   }
 
   /**
@@ -228,18 +348,21 @@ var PainterActionController = (function () {
    *
    * @param {Object} c A Canvas object.
    * @param {Object} s A Swatches object.
+   * @param {Object} l A resizer of handling the 
+   * width of drawing line.
    * @return {Object} Returns an instance of
    * PainterActionController if the given
    * Canvas and Swatches instance exists,
    * returns Null otherwise.
    */
-  function PainterActionController(c, s) {
+  function PainterActionController(c, s, l) {
     if (c && s) {
       instance = this;
       canvas = c;
       swatches = s;
+      lineWidthResizer = l;
 
-      registerRoutes();
+      registerActions();
     }
     else {
       return null;
@@ -256,12 +379,45 @@ var PainterActionController = (function () {
     swatches.setColor(color);
   };
 
+  /**
+   * Set the line width to LineWidthResizer and Canvas.
+   *
+   * @param {Integer} line
+   */
+  PainterActionController.prototype.setLineWidth = function(lineWidth) {
+    var width = lineWidthResizer.setLineWidth(lineWidth);
+
+    if (width > 0) {
+      canvas.setLineWidth(width);
+    }
+    else {
+      alert('Please input a number greater then 0.');
+    }
+  };
+
   return PainterActionController;
 })();
+
+function initTutorials() {
+  var $tutorials = $('.tutorial');
+
+  $tutorials.find('.btn-close').click(function () {
+    var tutorial = $(this).closest('.tutorial');
+
+    $(tutorial).animate({
+      top: -800
+    }, 1000, function () {
+      $(tutorial).remove();
+    });
+  });
+}
 
 /** Entry point of JavaScript. **/
 $(document).ready(function () {
   var canvas = new Canvas($("#myCanvas")),
       swatches = new Swatches($(".swatches")),
-      painterActionController = new PainterActionController(canvas, swatches);
+      lineWidthResizer = new LineWidthResizer($('.line-width-resizer')),
+      painterActionController = new PainterActionController(canvas, swatches, lineWidthResizer);
+
+      initTutorials();
 });

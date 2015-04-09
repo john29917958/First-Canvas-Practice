@@ -8,8 +8,7 @@ body {
 }
 
 .btn {
-	width: 200px;
-	height: 50px;
+	margin: 0;
 	color: white;
 	border-color: white;
 	border-style: solid;
@@ -18,9 +17,11 @@ body {
 	background-color: rgba(255, 255, 255, 0.1);
 	font-size: 15pt;
 	font-weight: bold;
+	text-align: center;
+	line-height: 47px;
 	transition: color 0.3s ease-in-out,
-				background-color 0.3s ease-in-out,
-				box-shadow 0.1s ease-in-out;
+				background-color 0.1s ease-in-out,
+				box-shadow 0.05s ease-in-out;
 }
 
 .btn:hover {
@@ -43,6 +44,22 @@ canvas#myCanvas {
 
 canvas#myCanvas:hover {
 	cursor: pointer;
+}
+
+input.form-control {
+	width: 100%;
+	height: 100%;
+	vertical-align: top;
+	border-style: solid;
+	border-color: #F0F0F0;
+	border-width: 1px;
+	border-radius: 5px;
+	display: inline-block;
+	transition: box-shadow 0.2s ease-in-out;
+}
+
+input.form-control:focus {
+	box-shadow: 0 0 25px rgba(0, 191, 255, 0.5);
 }
 
 .swatches .swatch-item {
@@ -69,26 +86,13 @@ canvas#myCanvas:hover {
 }
 
 .swatches > .current-color > input {
-	position: relative;
-	top: -16px;
-	height: 40px;
+	height: 39px;
 	width: 108px;
 	font-size: 20px;
 	margin: 0;
-	margin-bottom: -10px;
 	padding: 5px;
 	padding-top: 2px;
 	padding-bottom: 2px;
-	border-style: solid;
-	border-color: #F0F0F0;
-	border-width: 1px;
-	border-radius: 5px;
-	display: inline-block;
-	transition: box-shadow 0.2s ease-in-out;
-}
-
-.swatches > .current-color > input:focus {
-	box-shadow: 0 0 25px rgba(0, 191, 255, 0.5);
 }
 
 .swatches > .swatch-item:hover {
@@ -105,8 +109,81 @@ canvas#myCanvas:hover {
 	right: 0;
 }
 
+.line-width-resizer > .btn {
+	width: 30px;
+	height: 30px;
+	line-height: 25px;
+}
+
+.line-width-resizer > .form-control {
+	width: calc(100% - 71px);
+	height: 25px;
+	font-size: 12pt;
+}
+
 .text-center {
 	text-align: center;
+}
+
+.tutorial {
+	position: fixed;
+	top: 10px;
+	right: 10px;
+	width: 30px;
+	height: 30px;
+	border-radius: 50%;
+	border-style: solid;
+	border-width: 4px;
+	border-color: #0099CC;
+	color: white;
+	text-align: center;
+	font-size: 20px;
+	font-weight: bolder;
+	line-height: 30px;
+	background-color: rgba(255, 255, 255, 0.1);
+	display: inline-block;
+	overflow: hidden;
+	z-index: 1031;
+	transition: background-color 0.2s ease-in-out,
+				color 0.2s ease-in-out,
+				width 0.2s ease-in-out,
+				height 0.2s ease-in-out;
+	display: none;
+}
+
+.tutorial:hover {
+	width: 800px;
+	height: 410px;
+	padding: 30px;
+	text-align: left;
+	color: #686868;
+	background-color: white;
+	border-radius: 5px;
+	border-width: 1px;
+}
+
+.tutorial:hover > .information {
+	display: none;
+}
+
+.tutorial .btn {
+	color: #0099CC;
+	border-color: #0099CC;
+	width: 100%;
+}
+
+.tutorial .btn:hover {
+	color: white;
+	background-color: #0099CC;
+}
+
+.tutorial .btn:active {
+	box-shadow: 0 2px 35px rgba(0, 153, 204, 0.5);
+}
+
+.tutorial hr {
+	border-color: #989898;
+	width: calc(100% - 20px);
 }
 
 ul.side-bar {
@@ -121,6 +198,16 @@ ul.side-bar {
 	z-index: 1030;
 }
 
+ul.side-bar > li > .btn {
+	height: 50px;
+}
+
+ul.side-bar > hr {
+	width: 85%;
+	border-color: #585858;
+	box-shadow: 0 0 7px #585858;
+}
+
 ul.side-bar > li {
 	margin: 0;
 	padding-left: 20px;
@@ -129,6 +216,7 @@ ul.side-bar > li {
 	padding-bottom: 10px;
 }
 
+/*
 ul.side-bar > li:hover {
 	color: black;
 	background-color: white;
@@ -137,6 +225,7 @@ ul.side-bar > li:hover {
 				background-color 0.3s ease-in-out,
 				box-shadow 0.1s ease-in-out;
 }
+*/
 
 ul.side-bar > li.brand {
 	padding-top: 20px;
@@ -155,4 +244,8 @@ ul.side-bar > li.swatches:hover {
 	color: white;
 	background-color: transparent;
 	cursor: default;
+}
+
+ul.side-bar > li > * {
+	width: 100%;
 }
