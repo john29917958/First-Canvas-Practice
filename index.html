@@ -9,15 +9,32 @@
   <script src="js/main.js" type="text/javascript"></script>
 </head>
   <body>
+    <div class="tutorial" data-type="color">
+      <div class="information">i</div>
+      We can change the drawing color by input the color information into input and then press the Enter key on keyboard.
+      There are many types of color description we can use:
+      <br>
+      <br>
+      1. Use color name. For example, input "red" to draw a line with the color of an apple.<br>
+      2. Use color hex number. For example, input "#7CFC00" for LawnGreen.<br>
+      3. Use the form "rgb(R, G, B)" to set the color by RGB color model. For example, input "rgb(255, 255, 255)" to draw a snow white line.<br>
+      4. Use "rgba(R, G, B, Opacity)" to set a more powerful color with opacity. For example, input "rgba(0, 153, 204, 0.5)" to draw glasses.
+      <br><br>
+      <div class="text-center">
+        <button type="button" class="btn btn-close">
+          Okay, I got it!
+        </button>
+      </div>
+    </div>
     <h1 class="text-center">Draw line here</h1>
     <ul class="side-bar fixed-to-right">
       <li class="brand">Swatches</li>
       <li class="swatches">
         <div class="current-color">
           <div class="swatch-item" data-color="lawngreen"></div>
-          <input class="color-name" type="text" name="color" value="lawngreen">
+          <input class="form-control color-name" type="text" name="color" value="lawngreen">
         </div>
-        <hr>
+        <br>
         <span class="swatch-item" data-color="red"></span>
         <span class="swatch-item" data-color="yellow"></span>
         <span class="swatch-item" data-color="lawngreen"></span>
@@ -31,16 +48,23 @@
         <span class="swatch-item" data-color="black"></span>
         <!--<span class="swatch-item" data-color="transparent">X</span>-->
       </li>
+      <hr>
+      <li>
+        <div class="line-width-resizer">
+          <button class="btn decrease" type="button">-</button>
+          <input class="form-control text-center" value="1px">
+          <button class="btn increase" type="button">+</button>
+        </div>
+      </li>
+      <hr>
+      <li>
+        <button class="btn btn-clear" type="button">
+          Clear canvas
+        </button>
+      </li>
     </ul>
     <div class="text-center">
       <canvas id="myCanvas" width="" height=""></canvas>
-    </div>
-    <br>
-    <br>
-    <div class="text-center">
-      <button class="btn btn-clear" type="button">
-        Clear canvas
-      </button>
     </div>
   </body>
 </html>
