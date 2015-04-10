@@ -547,7 +547,7 @@ var PainterActionController = (function () {
       canvas.setLineWidth(width);
     }
     else {
-      alert('Wow~ that\'s amazing! but I\'m unable to do that for you :(\nPlease make sure the input is digit, is greater than 0 and is less than 9999.\nThank you :)');
+      alert('Wow~ that\'s amazing!\nBut I\'m unable to do that for you :(\nPlease make sure the input is digit, is greater than 0 and is less than 9999.\nThank you :)');
     }
   };
 
@@ -566,7 +566,7 @@ var PainterActionController = (function () {
       swatches.setColor(newColor);
     }
     else {
-      alert('Wow~ that\'s amazing! but I\'m unable to do that for you :(\nPlease make sure the input is digit, and is within 0~100.\nThank you :)');
+      alert('Wow~ that\'s amazing!\nBut I\'m unable to do that for you :(\nPlease make sure the input is digit, and is within 0~100.\nThank you :)');
     }
   };
 
