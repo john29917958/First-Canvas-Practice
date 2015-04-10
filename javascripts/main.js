@@ -82,10 +82,56 @@ var Swatches = (function() {
   return Swatches;
 })();
 
-var LineWidthResizer = (function () {
-  var instance, $resizer, $increaseButton,
-      $decreaseButton, $input, currentWidth;
+var AdjustBar = (function () {
+  function AdjustBar(bar) {
+    if ($(bar).length === 1) {
+      this.$adjustBar = $(bar);
+      this.$increaseButton = this.$adjustBar.children('.increase');
+      this.$decreaseButton = this.$adjustBar.children('.decrease');
+      this.$input = this.$adjustBar.children('input');
+      this.currentValue = 1;
+      /*
+      $input.focusin(function () {
+        var $tutorial = $('.tutorial[data-type="line-width"]');
+        if ($tutorial) {
+          $tutorial.slideDown();
+        }
+      });
+      */
+    }
+    else {
+      return null;
+    }
+  }
 
+  /**
+   * Gets all components of AdjustBar as jQuery
+   * objects.
+   *
+   * @return {JSON} Returns a JSON object containing
+   * all components of AdjustBar as jQuery objects.
+   */
+  AdjustBar.prototype.getElements = function() {
+    return {
+      $increaseButton: this.$increaseButton,
+      $decreaseButton: this.$decreaseButton,
+      $input: this.$input
+    };
+  };
+
+  AdjustBar.prototype.getValue = function() {
+    return this.currentValue;
+  };
+
+  AdjustBar.prototype.setValue = function(value) {
+    this.currentValue = value;
+    this.$input.val(value);
+  }
+
+  return AdjustBar;
+})();
+
+var LineWidthResizer = (function () {
   /**
    * Creates a LineWidthResizer.
    * @class
@@ -99,23 +145,16 @@ var LineWidthResizer = (function () {
    */
   function LineWidthResizer(resizer) {
     if ($(resizer).length === 1) {
-      instance = this;
-      $resizer = $(resizer);
-      $increaseButton = $resizer.children('.increase');
-      $decreaseButton = $resizer.children('.decrease');
-      $input = $resizer.children('input');
-      currentWidth = 1;
-      $input.focusin(function () {
-        var $tutorial = $('.tutorial[data-type="line-width"]');
-        if ($tutorial) {
-          $tutorial.slideDown();
-        }
-      });
+      AdjustBar.call(this, resizer);
     }
     else {
       return null;
     }
   }
+
+  // LineWidthResizer extends AdjustBar.
+  LineWidthResizer.prototype = Object.create(AdjustBar.prototype);
+  LineWidthResizer.prototype.constructor = LineWidthResizer;
 
   /**
    * Set the current line width.
@@ -131,13 +170,13 @@ var LineWidthResizer = (function () {
       if (typeof width === 'string') {
         width = width.replace('px', '');
       }
-      currentWidth = width;
-      $input.val(width + 'px');
+      this.setValue(width);
+      this.$input.val(this.$input.val() + 'px');
 
       return width;
     }
     else {
-      $input.val(currentWidth + 'px');
+      this.$input.val(this.getValue() + 'px');
 
       return 0;
     }
@@ -149,22 +188,7 @@ var LineWidthResizer = (function () {
    * @return {Integer} Returns the current line width.
    */
   LineWidthResizer.prototype.getLineWidth = function() {
-    return currentWidth;
-  };
-
-  /**
-   * Gets all components of LineWidthResizer as jQuery
-   * objects.
-   *
-   * @return {JSON} Returns a JSON object containing
-   * all components of LineWidthResizer as jQuery objects.
-   */
-  LineWidthResizer.prototype.getElements = function() {
-    return {
-      $increaseButton: $increaseButton,
-      $decreaseButton: $decreaseButton,
-      $input: $input
-    };
+    return this.getValue();
   };
 
   return LineWidthResizer;
@@ -339,6 +363,7 @@ var PainterActionController = (function () {
     });
 
     // Increase line width by 1 if increase button clicked.
+    console.dir(lineWidthResizer);
     lineWidthResizer.getElements().$increaseButton.click(function () {
       instance.setLineWidth(lineWidthResizer.getLineWidth() + 1);
     });
@@ -406,7 +431,7 @@ var PainterActionController = (function () {
       canvas.setLineWidth(width);
     }
     else {
-      alert('Please input a number greater then 0.');
+      alert('Draw something invisible?\nWow~ that\'s amazing! but I\'m unable to do that for you.\nPlease make sure the line width is greater than 0.');
     }
   };
 

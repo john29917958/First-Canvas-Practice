@@ -109,13 +109,13 @@ input.form-control:focus {
 	right: 0;
 }
 
-.line-width-resizer > .btn {
+.adjust-bar > .btn {
 	width: 30px;
 	height: 30px;
 	line-height: 25px;
 }
 
-.line-width-resizer > .form-control {
+.adjust-bar > .form-control {
 	width: calc(100% - 71px);
 	height: 25px;
 	font-size: 12pt;
