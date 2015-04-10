@@ -83,6 +83,10 @@ var Swatches = (function() {
 })();
 
 var AdjustBar = (function () {
+  /**
+   * Creates an AdjustBar.
+   * @class 
+   */
   function AdjustBar(bar) {
     if ($(bar).length === 1) {
       this.$adjustBar = $(bar);
@@ -119,10 +123,20 @@ var AdjustBar = (function () {
     };
   };
 
+  /**
+   * Gets the current value.
+   *
+   * @return {Integer} Returns the current value.
+   */
   AdjustBar.prototype.getValue = function() {
     return this.currentValue;
   };
 
+  /**
+   * Set the current value.
+   *
+   * @param {Integer} value The value to be set.
+   */
   AdjustBar.prototype.setValue = function(value) {
     this.currentValue = value;
     this.$input.val(value);
@@ -164,9 +178,9 @@ var LineWidthResizer = (function () {
    * is succeeded, returns 0 if setting is failed.
    */
   LineWidthResizer.prototype.setLineWidth = function(width) {
-    var pixelPattern = /[1-9][0-9]*(px)?/;
+    var pixelPattern = /[1-9][0-9]*/;
 
-    if (pixelPattern.test(width)) {
+    if (pixelPattern.test(width) && width < 9999) {
       if (typeof width === 'string') {
         width = width.replace('px', '');
       }
@@ -431,7 +445,7 @@ var PainterActionController = (function () {
       canvas.setLineWidth(width);
     }
     else {
-      alert('Draw something invisible?\nWow~ that\'s amazing! but I\'m unable to do that for you.\nPlease make sure the line width is greater than 0.');
+      alert('Wow~ that\'s amazing! but I\'m unable to do that for you :(\nPlease make sure the input is digit, is greater than 0 and is less than 9999.\nThank you :)');
     }
   };
 

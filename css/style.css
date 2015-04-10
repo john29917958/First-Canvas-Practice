@@ -116,7 +116,7 @@ input.form-control:focus {
 }
 
 .adjust-bar > .form-control {
-	width: calc(100% - 71px);
+	width: calc(100% - 72px);
 	height: 25px;
 	font-size: 12pt;
 }
