@@ -22,6 +22,7 @@ var Swatches = (function() {
       });
       this.getCurrentColorElements().$input.focusin(function () {
         var $tutorial = $('.tutorial[data-type="color"]');
+
         if ($tutorial) {
           $tutorial.slideDown('slow');
         }
@@ -193,17 +194,31 @@ var Canvas = (function() {
    * @param {Object} $canvas The <canvas> jQuery object.
    */
   function bindDrawEvent() {
+    var mousePressed = false,
+        pos = null;
+
+    $canvas.mouseout(function (e) {
+      mousePressed = false;
+    });
+
     $canvas.mousedown(function (e) {
-      var pos = instance.getMousePosition($canvas[0], e);
+      mousePressed = true;
+      pos = instance.getMousePosition($canvas[0], e);
+    });
 
-      $canvas.mousemove(function (e) {
-        var newPos = instance.getMousePosition($canvas[0], e);
+    $canvas.mouseup(function (e) {
+      mousePressed = false;
+      pos = null;
+    });
 
+    $canvas.mousemove(function (e) {
+      var newPos;
+
+      if (mousePressed) {
+        newPos = instance.getMousePosition($canvas[0], e);
         instance.drawLine({x: pos.x, y: pos.y}, {x: newPos.x, y: newPos.y});
         pos = newPos;
-      });
-    }).mouseup(function (e) {
-      $canvas.unbind('mousemove');
+      }
     });
   }
 
