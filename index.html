@@ -1,18 +1,19 @@
 <!DOCTYPE html>
 <html lang="utf-8">
 <head>
-  <title>My First Canvas Try</title>
+  <title>Simple Painter</title>
   <meta http-equiv="content-type" content="text/html"; charset="utf-8">
   <meta name="author" content="John Wang">
   <link rel="stylesheet" type="text/css" href="css/style.css">
-  <script src="js/jquery-2.1.3.min.js" type="text/javascript"></script>
-  <script src="js/main.js" type="text/javascript"></script>
+  <link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon">
+  <link rel="icon" href="images/favicon.ico" type="image/x-icon">
+  <script src="javascripts/jquery-2.1.3.min.js" type="text/javascript"></script>
+  <script src="javascripts/main.js" type="text/javascript"></script>
 </head>
   <body>
     <div class="tutorial" data-type="color">
       <div class="information">i</div>
-      We can change the drawing color by input the color information into input and then press the Enter key on keyboard.
-      There are many types of color description we can use:
+      I want to set the color which does not exist in the swatches, how can I change the color to the one I want? Don't worry, just look at the solutions provided below. It's pretty simple and easy!
       <br>
       <br>
       1. Use color name. For example, input "red" to draw a line with the color of an apple.<br>
@@ -50,9 +51,18 @@
       </li>
       <hr>
       <li>
-        <div class="line-width-resizer">
+        <div class="adjust-bar line-width-resizer">
+          <div class="header">Line width</div>
           <button class="btn decrease" type="button">-</button>
           <input class="form-control text-center" value="1px">
+          <button class="btn increase" type="button">+</button>
+        </div>
+      </li>
+      <li>
+        <div class="adjust-bar opacity-manager">
+          <div class="header">Line opacity</div>
+          <button class="btn decrease" type="button">-</button>
+          <input class="form-control text-center" value="100%">
           <button class="btn increase" type="button">+</button>
         </div>
       </li>
@@ -65,6 +75,13 @@
     </ul>
     <div class="text-center">
       <canvas id="myCanvas" width="" height=""></canvas>
+    </div>
+    <br>
+    <br>
+    <div class="text-center">
+      <a class="btn" target="_blank" href="https://github.com/john29917958/First-Canvas-Practice">
+        Fork me on Github
+      </a>
     </div>
   </body>
 </html>

@@ -9,6 +9,7 @@ body {
 
 .btn {
 	margin: 0;
+	padding: 15px;
 	color: white;
 	border-color: white;
 	border-style: solid;
@@ -18,7 +19,7 @@ body {
 	font-size: 15pt;
 	font-weight: bold;
 	text-align: center;
-	line-height: 47px;
+	text-decoration: none;
 	transition: color 0.3s ease-in-out,
 				background-color 0.1s ease-in-out,
 				box-shadow 0.05s ease-in-out;
@@ -109,16 +110,20 @@ input.form-control:focus {
 	right: 0;
 }
 
-.line-width-resizer > .btn {
+.adjust-bar > .btn {
 	width: 30px;
 	height: 30px;
-	line-height: 25px;
+	padding: 2px;
 }
 
-.line-width-resizer > .form-control {
-	width: calc(100% - 71px);
+.adjust-bar > .form-control {
+	width: calc(100% - 72px);
 	height: 25px;
 	font-size: 12pt;
+}
+
+.adjust-bar > .header {
+	margin-bottom: 5px;
 }
 
 .text-center {

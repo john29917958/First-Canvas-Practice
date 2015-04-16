@@ -22,6 +22,7 @@ var Swatches = (function() {
       });
       this.getCurrentColorElements().$input.focusin(function () {
         var $tutorial = $('.tutorial[data-type="color"]');
+
         if ($tutorial) {
           $tutorial.slideDown('slow');
         }
@@ -42,12 +43,33 @@ var Swatches = (function() {
   };
 
   /**
-   * Gets the current color in rgb(R, G, B) form.
+   * Gets the current color in rgb(R, G, B, A) form.
    *
-   * @return {String} Return the current color.
+   * @return {JSON} Return the current color.
    */
   Swatches.prototype.getCurrentColor = function() {
-    return $swatches.find('.current-color > .swatch-item').css('background-color');
+    var currentColor = $swatches.find('.current-color > .swatch-item').css('background-color'),
+        colorPattern = /[0-9][0-9]?[0-9]?/,
+        opacityPattern = /([0]\.[0-9][0-9]?|1)/,
+        r, g, b, a;
+
+    r = colorPattern.exec(currentColor);
+    currentColor = currentColor.replace(r, '');
+    g = colorPattern.exec(currentColor);
+    currentColor = currentColor.replace(g, '');
+    b = colorPattern.exec(currentColor);
+    currentColor = currentColor.replace(b, '');
+    a = opacityPattern.exec(currentColor);
+    if (a === null) {
+      a = 1;
+    }
+
+    return {
+      r: r,
+      g: g,
+      b: b,
+      a: a
+    };
   };
 
   /**
@@ -81,10 +103,73 @@ var Swatches = (function() {
   return Swatches;
 })();
 
-var LineWidthResizer = (function () {
-  var instance, $resizer, $increaseButton,
-      $decreaseButton, $input, currentWidth;
+var AdjustBar = (function () {
+  /**
+   * Creates an AdjustBar.
+   * @class 
+   */
+  function AdjustBar(bar) {
+    if ($(bar).length === 1) {
+      this.$adjustBar = $(bar);
+      this.$increaseButton = this.$adjustBar.children('.increase');
+      this.$decreaseButton = this.$adjustBar.children('.decrease');
+      this.$input = this.$adjustBar.children('input');
+      this.currentValue = 0;
+      this.$input.click(function (e) {
+        $(this).select();
+      });
+      /*
+      $input.focusin(function () {
+        var $tutorial = $('.tutorial[data-type="line-width"]');
+        if ($tutorial) {
+          $tutorial.slideDown();
+        }
+      });
+      */
+    }
+    else {
+      return null;
+    }
+  }
 
+  /**
+   * Gets all components of AdjustBar as jQuery
+   * objects.
+   *
+   * @return {JSON} Returns a JSON object containing
+   * all components of AdjustBar as jQuery objects.
+   */
+  AdjustBar.prototype.getElements = function() {
+    return {
+      $increaseButton: this.$increaseButton,
+      $decreaseButton: this.$decreaseButton,
+      $input: this.$input
+    };
+  };
+
+  /**
+   * Gets the current value.
+   *
+   * @return {Integer} Returns the current value.
+   */
+  AdjustBar.prototype.getValue = function() {
+    return this.currentValue;
+  };
+
+  /**
+   * Set the current value.
+   *
+   * @param {Integer} value The value to be set.
+   */
+  AdjustBar.prototype.setValue = function(value) {
+    this.currentValue = value;
+    this.$input.val(value);
+  }
+
+  return AdjustBar;
+})();
+
+var LineWidthResizer = (function () {
   /**
    * Creates a LineWidthResizer.
    * @class
@@ -98,23 +183,18 @@ var LineWidthResizer = (function () {
    */
   function LineWidthResizer(resizer) {
     if ($(resizer).length === 1) {
-      instance = this;
-      $resizer = $(resizer);
-      $increaseButton = $resizer.children('.increase');
-      $decreaseButton = $resizer.children('.decrease');
-      $input = $resizer.children('input');
-      currentWidth = 1;
-      $input.focusin(function () {
-        var $tutorial = $('.tutorial[data-type="line-width"]');
-        if ($tutorial) {
-          $tutorial.slideDown();
-        }
-      });
+      AdjustBar.call(this, resizer);
+      this.setValue(1);
+      this.$input.val(this.$input.val() + 'px');
     }
     else {
       return null;
     }
   }
+
+  // LineWidthResizer extends AdjustBar.
+  LineWidthResizer.prototype = Object.create(AdjustBar.prototype);
+  LineWidthResizer.prototype.constructor = LineWidthResizer;
 
   /**
    * Set the current line width.
@@ -124,19 +204,16 @@ var LineWidthResizer = (function () {
    * is succeeded, returns 0 if setting is failed.
    */
   LineWidthResizer.prototype.setLineWidth = function(width) {
-    var pixelPattern = /[1-9][0-9]*(px)?/;
+    var pixelPattern = /[1-9][0-9]*/;
 
-    if (pixelPattern.test(width)) {
-      if (typeof width === 'string') {
-        width = width.replace('px', '');
-      }
-      currentWidth = width;
-      $input.val(width + 'px');
+    if (pixelPattern.test(width) && width < 9999) {
+      this.setValue(width);
+      this.$input.val(this.$input.val() + 'px');
 
       return width;
     }
     else {
-      $input.val(currentWidth + 'px');
+      this.$input.val(this.getValue() + 'px');
 
       return 0;
     }
@@ -148,29 +225,65 @@ var LineWidthResizer = (function () {
    * @return {Integer} Returns the current line width.
    */
   LineWidthResizer.prototype.getLineWidth = function() {
-    return currentWidth;
-  };
-
-  /**
-   * Gets all components of LineWidthResizer as jQuery
-   * objects.
-   *
-   * @return {JSON} Returns a JSON object containing
-   * all components of LineWidthResizer as jQuery objects.
-   */
-  LineWidthResizer.prototype.getElements = function() {
-    return {
-      $increaseButton: $increaseButton,
-      $decreaseButton: $decreaseButton,
-      $input: $input
-    };
+    return this.getValue();
   };
 
   return LineWidthResizer;
 })();
 
+var OpacityManager = (function () {
+  function OpacityManager(opacityManager) {
+    if ($(opacityManager).length === 1) {
+      AdjustBar.call(this, opacityManager);
+      this.setValue(100);
+      this.$input.val(this.$input.val() + '%');
+    }
+    else {
+      return null;
+    }
+  }
+
+  // OpacityManager extends AdjustBar.
+  OpacityManager.prototype = Object.create(AdjustBar.prototype);
+  OpacityManager.prototype.constructor = OpacityManager;
+
+  /**
+   * Set the opacity value.
+   *
+   * @param {Integer} opacity The opacity by 100% ratio to be set.
+   * @return {Integer} Returns the set opacity value, returns -1 if
+   * setting failed.
+   */
+  OpacityManager.prototype.setOpacity = function(opacity) {
+    var opacityPattern = /[0-9][0-9]?[0-9]?/;
+
+    if (opacityPattern.test(opacity) && opacity <= 100) {
+      this.setValue(opacity);
+      this.$input.val(this.$input.val() + '%');
+
+      return this.getValue();
+    }
+    else {
+      this.$input.val(this.getValue() + '%');
+
+      return -1;
+    }
+  };
+
+  /**
+   * Gets the current opacity value by 100%.
+   *
+   * @return {Integer} Returns the current opacity value.
+   */
+  OpacityManager.prototype.getOpacity = function() {
+    return this.getValue();
+  };
+
+  return OpacityManager;
+})();
+
 var Canvas = (function() {
-  var instance, $canvas, context;
+  var instance, $canvas, context, currentColor;
 
   /**
    * Initializes the style of the canvas.
@@ -179,7 +292,7 @@ var Canvas = (function() {
    */
   function styleInit() {
     $canvas[0].width = 800;
-    $canvas[0].height = $(window).height() / 2;
+    $canvas[0].height = $(window).height() * 2 / 3;
     instance.setColor('lawngreen');
     context.shadowBlur = 20;
     context.shadowOffsetX = 0;
@@ -193,17 +306,31 @@ var Canvas = (function() {
    * @param {Object} $canvas The <canvas> jQuery object.
    */
   function bindDrawEvent() {
+    var mousePressed = false,
+        pos = null;
+
+    $canvas.mouseout(function (e) {
+      mousePressed = false;
+    });
+
     $canvas.mousedown(function (e) {
-      var pos = instance.getMousePosition($canvas[0], e);
+      mousePressed = true;
+      pos = instance.getMousePosition($canvas[0], e);
+    });
 
-      $canvas.mousemove(function (e) {
-        var newPos = instance.getMousePosition($canvas[0], e);
+    $canvas.mouseup(function (e) {
+      mousePressed = false;
+      pos = null;
+    });
 
+    $canvas.mousemove(function (e) {
+      var newPos;
+
+      if (mousePressed) {
+        newPos = instance.getMousePosition($canvas[0], e);
         instance.drawLine({x: pos.x, y: pos.y}, {x: newPos.x, y: newPos.y});
         pos = newPos;
-      });
-    }).mouseup(function (e) {
-      $canvas.unbind('mousemove');
+      }
     });
   }
 
@@ -288,7 +415,17 @@ var Canvas = (function() {
   Canvas.prototype.setColor = function(color) {
     context.strokeStyle = color;
     context.shadowColor = context.strokeStyle;
+    currentColor = color;
   };
+
+  /**
+   * Gets the current color.
+   *
+   * @return {String} Returns the current color.
+   */
+  Canvas.prototype.getColor = function() {
+    return currentColor;
+  }
 
   /**
    * Set the line width.
@@ -303,7 +440,7 @@ var Canvas = (function() {
 })();
 
 var PainterActionController = (function () {
-  var instance, canvas, swatches, lineWidthResizer;
+  var instance, canvas, swatches, lineWidthResizer, opacityManager;
 
   /**
    * Bind all event handlers to elements.
@@ -339,6 +476,23 @@ var PainterActionController = (function () {
         instance.setLineWidth($(this).val());
       }
     });
+
+    // Increase line opacity by 1 if increase button clicked.
+    opacityManager.getElements().$increaseButton.click(function () {
+      instance.setOpacity(opacityManager.getOpacity() + 1);
+    });
+
+    // Decrease line opacity by 1 if increase button clicked.
+    opacityManager.getElements().$decreaseButton.click(function () {
+      instance.setOpacity(opacityManager.getOpacity() - 1);
+    });
+
+    // Set the line opacity by the value of input of OpacityManager.
+    opacityManager.getElements().$input.keydown(function (e) {
+      if (e.keyCode === 13) {
+        instance.setOpacity($(this).val());
+      }
+    });
   }
 
   /**
@@ -348,19 +502,20 @@ var PainterActionController = (function () {
    *
    * @param {Object} c A Canvas object.
    * @param {Object} s A Swatches object.
-   * @param {Object} l A resizer of handling the 
-   * width of drawing line.
+   * @param {Object} l A LineWidthResizer object.
+   * @param {Object} o An OpacityManager object.
    * @return {Object} Returns an instance of
    * PainterActionController if the given
    * Canvas and Swatches instance exists,
    * returns Null otherwise.
    */
-  function PainterActionController(c, s, l) {
+  function PainterActionController(c, s, l, o) {
     if (c && s) {
       instance = this;
       canvas = c;
       swatches = s;
       lineWidthResizer = l;
+      opacityManager = o;
 
       registerActions();
     }
@@ -375,8 +530,9 @@ var PainterActionController = (function () {
    * @param {String} color The color to be set.
    */
   PainterActionController.prototype.switchColor = function(color) {
-    canvas.setColor(color);
     swatches.setColor(color);
+    canvas.setColor(color);
+    opacityManager.setOpacity(100);
   };
 
   /**
@@ -391,7 +547,26 @@ var PainterActionController = (function () {
       canvas.setLineWidth(width);
     }
     else {
-      alert('Please input a number greater then 0.');
+      alert('Wow~ that\'s amazing!\nBut I\'m unable to do that for you :(\nPlease make sure the input is digit, is greater than 0 and is less than 9999.\nThank you :)');
+    }
+  };
+
+  /**
+   * Set the line opacity to OpacityManager, Canvas and Swatches.
+   *
+   * @param {Integer} opacity The opacity to be set.
+   */
+  PainterActionController.prototype.setOpacity = function(opacity) {
+    var opacity = opacityManager.setOpacity(opacity),
+        currentColor = swatches.getCurrentColor(),
+        newColor = 'rgba(' + currentColor.r + ',' + currentColor.g + ',' + currentColor.b + ',' + opacity / 100 + ')';
+
+    if (opacity !== -1) {
+      canvas.setColor(newColor);
+      swatches.setColor(newColor);
+    }
+    else {
+      alert('Wow~ that\'s amazing!\nBut I\'m unable to do that for you :(\nPlease make sure the input is digit, and is within 0~100.\nThank you :)');
     }
   };
 
@@ -417,7 +592,7 @@ $(document).ready(function () {
   var canvas = new Canvas($("#myCanvas")),
       swatches = new Swatches($(".swatches")),
       lineWidthResizer = new LineWidthResizer($('.line-width-resizer')),
-      painterActionController = new PainterActionController(canvas, swatches, lineWidthResizer);
-
+      opacityManager = new OpacityManager($('.opacity-manager')),
+      painterActionController = new PainterActionController(canvas, swatches, lineWidthResizer, opacityManager);
       initTutorials();
 });
